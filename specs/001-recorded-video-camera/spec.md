@@ -227,6 +227,35 @@ default, delete one, and confirm the library reflects each change.
 - **SC-007**: The user's computer remains responsive enough to take part in the meeting (speak,
   share screen, take notes) while a recording is being presented.
 
+## Quality Bar
+
+- **Reference**: OBS Studio Virtual Camera playing the same test clip from a Media Source with
+  "Loop" on, output at 720p and 30 pictures per second — installed on the development machine
+  (`C:\Program Files\obs-studio\bin\64bit\obs64.exe`); source at
+  https://github.com/obsproject/obs-studio
+- **How the critic gets it**: present one 30-second test clip through OBS Virtual Camera and
+  through the tool's camera in turn, and record each from the consumer side with ffmpeg reading
+  the camera device for 60 seconds so the capture spans the repeat point. Watch the two captures
+  side by side, and check each in a Teams or Zoom camera preview.
+- **Comparison question**: "Watching both captures across the point where the clip repeats, which
+  one would a meeting participant be less likely to notice is a looping recording?"
+- **Measurable target**: consumer-side capture at 720p and 30 pictures per second with 1% or
+  fewer dropped or repeated pictures over 10 minutes (a proxy for SC-004's 2-hour meeting);
+  placeholder shown within 2 seconds of stop (SC-005); recording visible within 30 seconds of
+  starting the tool (SC-002).
+- **Per-area bars**:
+  - Recording: the Windows Camera app capturing the same webcam at the same resolution for 30
+    seconds, compared for sharpness and smoothness.
+- **Done checks**:
+  - Does a camera from the tool appear in the camera list of both Teams and Zoom while the tool
+    is running?
+  - In a 10-minute consumer-side capture at 720p, are dropped plus repeated pictures 1% or fewer?
+  - Does a capture spanning the repeat point show no blank, frozen or abruptly jumping pictures?
+  - Within 2 seconds of stopping presentation, does the tool's camera show the placeholder
+    picture with no image of the user?
+  - While a recording is being presented, is the webcam's in-use light off?
+  - Do the full pytest suite, the type check and the lint all pass?
+
 ## Assumptions
 
 - The tool is for a single person using their own computer and their own likeness. Presenting a
