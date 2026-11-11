@@ -155,7 +155,12 @@ Command ends after Phase 1 design. Report branch, IMPL_PLAN path, and generated 
    - Do not include full implementation code, model/service/controller bodies, migrations, or complete test suites
    - Keep this artifact as a validation/run guide; implementation details belong in `tasks.md` and the implementation phase
 
-**Output**: data-model.md, /contracts/*, quickstart.md
+4. **Create developer testing guide (always, default)** → `testing-guide.md`:
+   - Copy `.specify/templates/testing-guide-template.md` to FEATURE_DIR/testing-guide.md and fill every section for this feature; remove a section only when it truly does not apply, and say why in one line
+   - Derive manual scenarios from the spec's acceptance scenarios and edge cases (trace each to its user story / FR id), safety and privacy checks from the constitution and the plan, and automated check commands from the project's real test commands
+   - This is the document a developer follows to test once implementation is done; `/speckit-implement` finalizes it. Keep `quickstart.md` as the short run guide and link between them rather than duplicating
+
+**Output**: data-model.md, /contracts/*, quickstart.md, testing-guide.md
 
 ## Key rules
 
@@ -164,6 +169,6 @@ Command ends after Phase 1 design. Report branch, IMPL_PLAN path, and generated 
 
 ## Done When
 
-- [ ] Plan workflow executed and design artifacts generated
+- [ ] Plan workflow executed and design artifacts generated (including `testing-guide.md`)
 - [ ] Extension hooks dispatched or skipped according to the rules in Mandatory Post-Execution Hooks above
 - [ ] Completion reported to user with branch, plan path, and generated artifacts

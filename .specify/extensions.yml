@@ -1,0 +1,23 @@
+installed:
+- modes
+settings:
+  auto_execute_hooks: true
+hooks:
+  after_specify:
+  - extension: modes
+    command: speckit.modes.bar
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Set a quality bar for this feature (needed for gauntlet mode)?
+    description: Adds a Quality Bar section to spec.md
+    condition: null
+  after_tasks:
+  - extension: modes
+    command: speckit.modes.tag
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Tag each task with a build mode (direct / bestof:N / gauntlet)?
+    description: Writes [mode:...] tags into tasks.md
+    condition: null

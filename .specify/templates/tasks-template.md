@@ -157,6 +157,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
+- [ ] TXXX Finalize testing-guide.md against the built feature (real commands, devices, sample data) and run its automated checks
 
 ---
 

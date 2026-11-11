@@ -1,0 +1,30 @@
+# Build Modes configuration
+# Copy to .specify/extensions/modes/modes-config.yml and edit.
+# Precedence: command arguments > task [mode:...] tag > this file > extension defaults.
+
+# Mode used for any task that has no [mode:...] tag.
+# One of: direct | bestof | gauntlet
+default_mode: direct
+
+best_of_n:
+  # Number of independent attempts per task. 2-5 is sensible; cost scales linearly.
+  n: 3
+
+gauntlet:
+  # 0 = no cap: loop until the critic picks ours blind, or until you stop the run.
+  # Set a number (e.g. 8) if you want a hard ceiling on rounds per task.
+  max_rounds: 0
+  # Candidates whose tests fail are never put in front of the critic.
+  require_tests_pass: true
+
+# Reasoning effort per role, used when your agent can set effort per subagent
+# (e.g. Claude Code). One of: low | medium | high | xhigh | max.
+# Higher effort means more work without you, and more assumptions on your behalf.
+# max tends to overthink; test it before making it a default.
+effort:
+  direct: medium
+  bestof_builder: medium
+  bestof_judge: high
+  gauntlet_builder: high
+  gauntlet_critic: high
+  lead_long_run: xhigh

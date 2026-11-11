@@ -57,7 +57,16 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. Run `.specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+0. **Implementation branch (repo override)**. Implementation never runs on `main`; it gets its own branch. Local only: never push or open a PR.
+   - Parse overrides from the user input and strip them before using the rest as guidance: `--branch <name>` (implementation branch name) and `--base <ref>` (branch point instead of the default).
+   - Default name: `feature/<slug>`, where `<slug>` is FEATURE_DIR's folder name without its numeric prefix (`specs/001-recorded-video-camera` → `feature/recorded-video-camera`). Use `fix/<slug>` for a bug-fix spec.
+   - Run `git status` first. Note the starting branch.
+   - If the target branch already exists locally, switch to it (resume) and report that. If the working tree is dirty on a different branch, stop and ask rather than carrying changes across silently.
+   - Otherwise `git switch -c <name> <base>`. Base defaults to `main` when it exists, otherwise to the starting branch.
+   - The spec artifacts (`spec.md`, `plan.md`, `tasks.md`, FEATURE_DIR) may exist only on the starting branch or as uncommitted files. After switching, confirm FEATURE_DIR is present; if not, restore it with `git checkout <starting-branch> -- <FEATURE_DIR>`. Report which branch the artifacts came from.
+   - Report the branch name, base, and starting branch in the completion summary.
+
+1. Run `.specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot"). The script resolves the feature from `SPECIFY_FEATURE_DIRECTORY` or `.specify/feature.json` before falling back to the branch name, so the new branch name does not break it; if it still fails, set `SPECIFY_FEATURE_DIRECTORY` to the FEATURE_DIR.
 
 2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
    - Treat checklist markers as a read-only gate: scan checkbox state, report status, and ask before proceeding when needed; do NOT modify checklist files or markers
@@ -179,6 +188,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Check that implemented features match the original specification
    - Validate that tests pass and coverage meets requirements
    - Confirm the implementation follows the technical plan
+   - **Finalize the developer testing guide**: if FEATURE_DIR/testing-guide.md is missing, create it from `.specify/templates/testing-guide-template.md`. Otherwise update it to match what was actually built (real commands, devices, sample data, error messages), run its Automated checks section, and record the outcome. Leave the manual scenario Result and Sign-off boxes unticked for the developer; do not claim manual steps were performed
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit-tasks` first to regenerate the task list.
 
@@ -225,5 +235,6 @@ Report final status with summary of completed work.
 
 - [ ] All tasks in tasks.md completed and marked `[X]`
 - [ ] Implementation validated against specification, plan, and test coverage
+- [ ] `testing-guide.md` finalized for the developer (automated checks run, manual boxes left for them)
 - [ ] Extension hooks dispatched or skipped according to the rules in Mandatory Post-Execution Hooks above
 - [ ] Completion reported to user with summary of completed work

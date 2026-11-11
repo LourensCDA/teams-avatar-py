@@ -1,0 +1,69 @@
+schema_version: "1.0"
+
+extension:
+  id: modes
+  name: "Build Modes"
+  version: "1.1.0"
+  description: "Implement tasks in one of three modes: direct (just do it), best-of-N (N blind attempts, a judge picks one) or gauntlet (builder vs harsh critic, loop until it beats a real bar)."
+  category: "process"
+  effect: "read-write"
+  author: "Lourens Botha (CDA)"
+  repository: "https://github.com/your-org/spec-kit-modes"
+  license: "CC-BY-4.0"
+  homepage: "https://github.com/your-org/spec-kit-modes"
+
+requires:
+  speckit_version: ">=0.9.0"
+
+provides:
+  commands:
+    - name: speckit.modes.bar
+      file: commands/speckit.modes.bar.md
+      description: "Add or refresh a Quality Bar section in spec.md: a named, fetchable, comparable reference plus a measurable target"
+    - name: speckit.modes.tag
+      file: commands/speckit.modes.tag.md
+      description: "Propose and write a [mode:...] tag for each task in tasks.md (direct, bestof:N or gauntlet)"
+    - name: speckit.modes.implement
+      file: commands/speckit.modes.implement.md
+      description: "Execute tasks.md with a default build mode and per-task overrides: direct, best-of-N or gauntlet"
+      aliases: ["speckit.modes.run"]
+
+  config:
+    - name: "modes-config.yml"
+      template: "config-template.yml"
+      description: "Default mode, N for best-of-N, and optional gauntlet round cap"
+      required: false
+
+hooks:
+  after_specify:
+    command: speckit.modes.bar
+    optional: true
+    prompt: "Set a quality bar for this feature (needed for gauntlet mode)?"
+    description: "Adds a Quality Bar section to spec.md"
+  after_tasks:
+    command: speckit.modes.tag
+    optional: true
+    prompt: "Tag each task with a build mode (direct / bestof:N / gauntlet)?"
+    description: "Writes [mode:...] tags into tasks.md"
+
+defaults:
+  default_mode: direct
+  best_of_n:
+    n: 3
+  gauntlet:
+    max_rounds: 0
+    require_tests_pass: true
+  effort:
+    direct: medium
+    bestof_builder: medium
+    bestof_judge: high
+    gauntlet_builder: high
+    gauntlet_critic: high
+    lead_long_run: xhigh
+
+tags:
+  - "implement"
+  - "quality"
+  - "best-of-n"
+  - "gauntlet"
+  - "subagents"

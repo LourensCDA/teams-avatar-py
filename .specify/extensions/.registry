@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "extensions": {
+    "modes": {
+      "version": "1.1.0",
+      "source": "local",
+      "manifest_hash": "sha256:ee3e4dfa855a4546d389b181e41c24fab52d5498c4286a07219f5392332c6ffa",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.modes.bar",
+          "speckit.modes.tag",
+          "speckit.modes.implement",
+          "speckit.modes.run"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-11-11T08:27:41.168341+00:00"
+    }
+  }
+}
