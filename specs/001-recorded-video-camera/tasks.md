@@ -58,7 +58,7 @@ Single project with the `src/` layout from plan.md: package `src/teams_avatar/`,
 - [ ] T016 [P] [mode:direct] Unit tests for frame geometry and drawing in `tests/unit/test_frames.py`: size cap rule "Longer side ≤ 1920 and shorter side ≤ 1080 … so portrait video keeps its orientation", even dimensions, never scales up; `fit_on_canvas` scales down only, centres smaller frames at their own size on the neutral background (R6) including portrait and 4:3; `placeholder(w, h)` returns a dark grey frame with the "Camera paused" text region and no input-derived pixels; `draw_indicator` changes only the lower-left banner region and scales with frame height at 720p and 1080p
 - [ ] T017 [P] [mode:direct] Unit tests for startup reconciliation in `tests/unit/test_reconcile.py`: `*.partial.mp4` not held by a running recording is deleted; an `<id>.mp4` with no library entry is added as `origin=imported` named "`Recovered YYYY-MM-DD HH-MM-SS`" and reported once; entries whose file is missing are kept and flagged `missing`
 - [ ] T018 [P] [mode:direct] Unit tests for the first-use flow in `tests/unit/test_app_first_use.py`: `App.first_use_notice()` returns text stating the indicator is off by default and that disclosure and meeting-rule compliance are the user's responsibility, and returns `None` after `acknowledge_first_use()`
-- [ ] T019 [P] [mode:direct] Unit tests for the CLI frame in `tests/unit/test_cli_base.py`: `--json` prints one JSON object; errors print `error: <cause>. <what to do next>` to stderr with the mapped exit code; first-use notice requires `y` interactively; with `--json` or non-tty stdin it fails with exit code 3 and the notice unless `--accept-notice` is given (contracts/cli.md)
+- [ ] T019 [P] [mode:direct] Unit tests for the CLI frame in `tests/unit/test_cli_base.py`: `--json` prints one JSON object; errors print `error: <cause>. <what to do next>` to stderr with the mapped exit code; first-use notice requires `y` interactively; with `--json` or non-tty stdin it fails with exit code 3 and the notice unless `--accept-notice` is given; the hidden `service` command is exempt and starts without the notice even when it was never acknowledged (contracts/cli.md)
 
 ### Implementation for Foundational
 
@@ -66,16 +66,16 @@ Single project with the `src/` layout from plan.md: package `src/teams_avatar/`,
 - [ ] T021 [P] [mode:direct] Implement `TeamsAvatarError` hierarchy in `src/teams_avatar/errors.py` (`CameraUnavailableError`, `NameClashError`, `StorageFullError`, `ImportRejectedError`, `NotFoundError`, `InUseError`, `NoDefaultError`, `AlreadyPresentingError`, `RecordingUnreadableError`, `UnreadableVideoError`, `VirtualCameraError` with `kind` `not_installed` | `in_use`, `ServiceError`, `ServiceNotRunning`, `DeviceError`, `NoticeNotAcknowledgedError`), each with message and exit code (passes T008)
 - [ ] T022 [mode:direct] Implement dataclasses in `src/teams_avatar/models.py`: `Recording` (fields and rules exactly as data-model.md, incl. `origin` enum `recorded` | `imported`, `warnings` list of `too_short` | `loop_ghosting`, `source_name` "Imported only: original file name (not full path)"), `Settings`, `ActivityRecord`, `RecordingSessionInfo`, `PresentationStatus` (service_running, presenting, recording name/id, elapsed, canvas size, quality, indicator), `CameraInfo`, `RecordResult`, `RecordingView` (adds `presenting`, `missing`)
 - [ ] T023 [P] [mode:direct] Implement `src/teams_avatar/locks.py` with `msvcrt.locking` based `DataLock` (blocking, short) and `ServiceLock` (`try_acquire`) (passes T012)
-- [ ] T024 [mode:direct] Implement `src/teams_avatar/library.py` (load/validate/atomic save under `DataLock`, name rules, default handling, lookup) (passes T009; depends on T020–T023)
-- [ ] T025 [P] [mode:direct] Implement `src/teams_avatar/settings.py` (passes T010; depends on T022–T023)
-- [ ] T026 [P] [mode:direct] Implement `src/teams_avatar/activity.py` (append under `DataLock`, read last N) (passes T011; depends on T022–T023)
+- [ ] T024 [mode:direct] Implement `src/teams_avatar/library.py` (load/validate/atomic save under `DataLock`, name rules, default handling, lookup) (passes T009; depends on T020–T023) — covers FR-004, FR-005
+- [ ] T025 [P] [mode:direct] Implement `src/teams_avatar/settings.py` (passes T010; depends on T022–T023) — covers FR-017, FR-023
+- [ ] T026 [P] [mode:direct] Implement `src/teams_avatar/activity.py` (append under `DataLock`, read last N) (passes T011; depends on T022–T023) — covers FR-016
 - [ ] T027 [P] [mode:direct] Implement `src/teams_avatar/logging_setup.py` (JSON formatter, `session_id` context var, file handler at `logs/teams-avatar.log`) (passes T013)
-- [ ] T028 [P] [mode:bestof:3] Implement `VideoWriter`/`VideoReader`/`probe` protocols and PyAV adapter in `src/teams_avatar/adapters/pyav_codec.py` (passes T014)
-- [ ] T029 [P] [mode:direct] Implement `src/teams_avatar/analysis.py` (passes T015; depends on T028)
-- [ ] T030 [P] [mode:bestof:3] Implement `src/teams_avatar/frames.py` with OpenCV drawing for placeholder ("Camera paused", camera-off symbol) and the "RECORDED VIDEO" banner (passes T016)
-- [ ] T031 [mode:direct] Implement `src/teams_avatar/reconcile.py` (passes T017; depends on T024, T028)
-- [ ] T032 [mode:direct] Implement `App` facade skeleton in `src/teams_avatar/app.py`: constructor wiring (paths, library, settings, activity, adapters injected for tests), one-time reconciliation per process, `first_use_notice()`, `acknowledge_first_use()`, `history(limit)` (passes T018; depends on T024–T026, T031)
-- [ ] T033 [mode:direct] Implement CLI frame in `src/teams_avatar/cli.py`: argparse with sub-commands registry, global `--json` and `--accept-notice`, first-use prompt, error-to-exit-code mapping, `history [--limit N]` command (default 20) (passes T019; depends on T032)
+- [ ] T028 [P] [mode:bestof:3] Implement `VideoWriter`/`VideoReader`/`probe` protocols and PyAV adapter in `src/teams_avatar/adapters/pyav_codec.py` (passes T014) — covers FR-004, FR-021, FR-022
+- [ ] T029 [P] [mode:direct] Implement `src/teams_avatar/analysis.py` (passes T015; depends on T028) — covers FR-015
+- [ ] T030 [P] [mode:bestof:3] Implement `src/teams_avatar/frames.py` with OpenCV drawing for placeholder ("Camera paused", camera-off symbol) and the "RECORDED VIDEO" banner (passes T016) — covers FR-017, FR-020, FR-022, FR-023
+- [ ] T031 [mode:direct] Implement `src/teams_avatar/reconcile.py` (passes T017; depends on T024, T028) — covers FR-004
+- [ ] T032 [mode:direct] Implement `App` facade skeleton in `src/teams_avatar/app.py`: constructor wiring (paths, library, settings, activity, adapters injected for tests), one-time reconciliation per process, `first_use_notice()`, `acknowledge_first_use()`, `history(limit)` (passes T018; depends on T024–T026, T031) — covers FR-019
+- [ ] T033 [mode:direct] Implement CLI frame in `src/teams_avatar/cli.py`: argparse with sub-commands registry, global `--json` and `--accept-notice`, first-use prompt, error-to-exit-code mapping, `history [--limit N]` command (default 20) (passes T019; depends on T032) — covers FR-014, FR-016, FR-018
 
 **Checkpoint**: Foundation ready - `uv run pytest`, `uv run mypy src tests`, `uv run ruff check .` all pass; user story implementation can now begin
 
@@ -96,19 +96,19 @@ Single project with the `src/` layout from plan.md: package `src/teams_avatar/`,
 - [ ] T038 [P] [US1] [mode:direct] Unit tests for the service window in `tests/unit/test_service_window.py`: title strings `Teams Avatar — PRESENTING "<name>" — indicator OFF|ON` and `Teams Avatar — IDLE — camera paused`; first line "Keep this window open during meetings; closing it stops the camera."; failure line format per contracts/cli.md (title setter injected, no real console)
 - [ ] T039 [P] [US1] [mode:direct] Hardware contract tests for the virtual camera adapter in `tests/contract/test_virtual_camera.py` (`@pytest.mark.hardware`): open 1280×720 at 30 fps and send 90 frames; a second sender raises `VirtualCameraError(kind="in_use")`; with the registry check patched to "missing" raises `kind="not_installed"`
 - [ ] T040 [P] [US1] [mode:direct] Unit tests for presentation facade methods in `tests/unit/test_app_present.py` with a fake control channel and fake service launcher: `present(None)` uses the default or raises `NoDefaultError`; missing/unreadable file raises `RecordingUnreadableError` naming the recording; starts the service when `ServiceNotRunning` and waits up to 10 s; `stop`, `status`, `set_indicator` (saves and forwards when running), `set_quality` (`applies_at_next_service_start` true while running), `shutdown`
-- [ ] T041 [P] [US1] [mode:direct] Unit tests for US1 CLI commands in `tests/unit/test_cli_present.py`: `import`, `present`, `stop`, `status`, `indicator on|off`, `quality 720p|1080p`, `shutdown` output text and exit codes match contracts/cli.md examples, including "Keep the "Teams Avatar" window open during meetings; closing it stops the camera."
-- [ ] T042 [US1] [mode:direct] Integration test in `tests/integration/test_present_flow.py`: real codec + real named pipe + service running in a thread with `FakeFrameSink`; import a 10 s synthetic clip, present, collect 400 frames, assert blend at the repeat point and no repeated or blank frames, stop → placeholder within 2 s of wall time
+- [ ] T041 [P] [US1] [mode:direct] Unit tests for US1 CLI commands in `tests/unit/test_cli_present.py`: `import`, `present`, `stop`, `status`, `indicator on|off`, `quality 720p|1080p`, `shutdown` output text and exit codes match contracts/cli.md examples, including "If it is not listed, close and reopen Teams or Zoom, or reopen its camera settings." (spec edge case: meeting app opened before presentation) and "Keep the "Teams Avatar" window open during meetings; closing it stops the camera."
+- [ ] T042 [US1] [mode:direct] Integration test in `tests/integration/test_present_flow.py`: real codec + real named pipe + service running in a thread with `FakeFrameSink`; import a 10 s synthetic clip, present, collect 400 frames, assert blend at the repeat point and no repeated or blank frames, stop → placeholder within 2 s of wall time — covers FR-007, FR-008, FR-020, SC-004, SC-005
 
 ### Implementation for User Story 1
 
-- [ ] T043 [P] [US1] [mode:bestof:3] Implement `src/teams_avatar/importer.py` (passes T034)
-- [ ] T044 [P] [US1] [mode:gauntlet] Implement `src/teams_avatar/loop_player.py` (passes T035)
-- [ ] T045 [P] [US1] [mode:bestof:3] Implement `src/teams_avatar/control.py`: per-user pipe name, key file written by the service before listening, JSON messages, client with 1 s connect timeout (passes T036)
-- [ ] T046 [P] [US1] [mode:direct] Implement `FrameSink` protocol and pyvirtualcam `obs` adapter in `src/teams_avatar/adapters/virtual_camera.py`, mapping "device not found! Did you install OBS?" to `not_installed` and "virtual camera output could not be started" to `in_use` (R1) (passes T039 on hardware)
-- [ ] T047 [P] [US1] [mode:direct] Implement `src/teams_avatar/service_window.py` (console title via `SetConsoleTitleW` through `ctypes`, timestamped state/failure lines) (passes T038)
-- [ ] T048 [US1] [mode:gauntlet] Implement `src/teams_avatar/service.py`: `ServiceLock` acquired before the pipe opens (second instance exits); pacer thread (one frame per 33 ms via `sleep_until_next_frame`, placeholder on underrun > 200 ms), decoder thread (read-ahead queue of up to 60 frames from `LoopPlayer`), control thread (accept loop → command queue); fixed canvas from the quality setting; Presentation Session per data-model.md; `python -m teams_avatar service` entry (passes T037; depends on T044–T047)
-- [ ] T049 [US1] [mode:bestof:3] Add service launcher and presentation methods to `src/teams_avatar/app.py`: `import_file`, `present`, `stop`, `status`, `set_indicator`, `set_quality`, `shutdown`; launcher starts `python -m teams_avatar service` with `CREATE_NEW_CONSOLE` and minimised window (`STARTUPINFO` `SW_SHOWMINNOACTIVE`), then polls the pipe up to 10 s (passes T040; depends on T043, T045, T048)
-- [ ] T050 [US1] [mode:direct] Add `import`, `present`, `stop`, `status`, `indicator`, `quality`, `shutdown`, and hidden `service` sub-commands to `src/teams_avatar/cli.py` (passes T041, T042; depends on T049)
+- [ ] T043 [P] [US1] [mode:bestof:3] Implement `src/teams_avatar/importer.py` (passes T034) — covers FR-015, FR-021, FR-022
+- [ ] T044 [P] [US1] [mode:gauntlet] Implement `src/teams_avatar/loop_player.py` (passes T035) — covers FR-007
+- [ ] T045 [P] [US1] [mode:bestof:3] Implement `src/teams_avatar/control.py`: per-user pipe name, key file written by the service before listening, JSON messages, client with 1 s connect timeout (passes T036) — covers FR-008, FR-009, FR-010, FR-012
+- [ ] T046 [P] [US1] [mode:direct] Implement `FrameSink` protocol and pyvirtualcam `obs` adapter in `src/teams_avatar/adapters/virtual_camera.py`, mapping "device not found! Did you install OBS?" to `not_installed` and "virtual camera output could not be started" to `in_use` (R1) (passes T039 on hardware) — covers FR-006
+- [ ] T047 [P] [US1] [mode:direct] Implement `src/teams_avatar/service_window.py` (console title via `SetConsoleTitleW` through `ctypes`, timestamped state/failure lines) (passes T038) — covers FR-009, FR-014, FR-017
+- [ ] T048 [US1] [mode:gauntlet] Implement `src/teams_avatar/service.py`: `ServiceLock` acquired before the pipe opens (second instance exits); pacer thread (one frame per 33 ms via `sleep_until_next_frame`, placeholder on underrun > 200 ms), decoder thread (read-ahead queue of up to 60 frames from `LoopPlayer`), control thread (accept loop → command queue); fixed canvas from the quality setting; Presentation Session per data-model.md; `python -m teams_avatar service` entry (passes T037; depends on T044–T047) — covers FR-006, FR-007, FR-008, FR-010, FR-011, FR-020, FR-023, SC-004, SC-005
+- [ ] T049 [US1] [mode:bestof:3] Add service launcher and presentation methods to `src/teams_avatar/app.py`: `import_file`, `present`, `stop`, `status`, `set_indicator`, `set_quality`, `shutdown`; launcher starts `python -m teams_avatar service` with `CREATE_NEW_CONSOLE` and minimised window (`STARTUPINFO` `SW_SHOWMINNOACTIVE`), then polls the pipe up to 10 s (passes T040; depends on T043, T045, T048) — covers FR-006, FR-008, FR-009, FR-017, FR-019, FR-023, SC-002
+- [ ] T050 [US1] [mode:direct] Add `import`, `present`, `stop`, `status`, `indicator`, `quality`, `shutdown`, and hidden `service` sub-commands to `src/teams_avatar/cli.py` (passes T041, T042; depends on T049) — covers FR-018
 
 **Checkpoint**: User Story 1 is fully functional with an imported file; run quickstart steps 2, 4–8 and testing-guide TS-001/TS-002 first (plan risk: Teams/Zoom must list the camera)
 
@@ -130,11 +130,11 @@ Single project with the `src/` layout from plan.md: package `src/teams_avatar/`,
 
 ### Implementation for User Story 2
 
-- [ ] T056 [P] [US2] [mode:direct] Implement `CameraLister` in `src/teams_avatar/adapters/camera_list.py` (PowerShell `Get-CimInstance Win32_PnPEntity` via `subprocess`, 10 s timeout) (passes T051)
-- [ ] T057 [P] [US2] [mode:bestof:3] Implement `CameraSource` with the mode ladder in `src/teams_avatar/adapters/pyav_capture.py` (DirectShow by name, `video_device_number` for duplicates) (passes T052, T054)
-- [ ] T058 [P] [US2] [mode:direct] Implement `RecordingUI` in `src/teams_avatar/adapters/preview_window.py` (OpenCV window, red "REC" mark, elapsed time, key polling, window-closed detection)
-- [ ] T059 [US2] [mode:bestof:3] Implement `src/teams_avatar/recording.py` (passes T053; depends on T057)
-- [ ] T060 [US2] [mode:direct] Add `list_cameras` and `record` to `src/teams_avatar/app.py` and `cameras`, `record` sub-commands to `src/teams_avatar/cli.py` (passes T055; depends on T056, T058, T059)
+- [ ] T056 [P] [US2] [mode:direct] Implement `CameraLister` in `src/teams_avatar/adapters/camera_list.py` (PowerShell `Get-CimInstance Win32_PnPEntity` via `subprocess`, 10 s timeout) (passes T051) — covers FR-002
+- [ ] T057 [P] [US2] [mode:bestof:3] Implement `CameraSource` with the mode ladder in `src/teams_avatar/adapters/pyav_capture.py` (DirectShow by name, `video_device_number` for duplicates) (passes T052, T054) — covers FR-001, FR-002, FR-022
+- [ ] T058 [P] [US2] [mode:direct] Implement `RecordingUI` in `src/teams_avatar/adapters/preview_window.py` (OpenCV window, red "REC" mark, elapsed time, key polling, window-closed detection) — covers FR-001
+- [ ] T059 [US2] [mode:bestof:3] Implement `src/teams_avatar/recording.py` (passes T053; depends on T057) — covers FR-001, FR-003, FR-004, FR-015
+- [ ] T060 [US2] [mode:direct] Add `list_cameras` and `record` to `src/teams_avatar/app.py` and `cameras`, `record` sub-commands to `src/teams_avatar/cli.py` (passes T055; depends on T056, T058, T059) — covers FR-002, FR-018, FR-019
 
 **Checkpoint**: User Stories 1 and 2 both work independently; a recording made with `record` can be presented
 
@@ -154,9 +154,9 @@ Single project with the `src/` layout from plan.md: package `src/teams_avatar/`,
 
 ### Implementation for User Story 3
 
-- [ ] T064 [US3] [mode:direct] Add `list_recordings`, `rename`, `delete`, `set_default` to `src/teams_avatar/app.py` (passes T061)
-- [ ] T065 [P] [US3] [mode:direct] Add `PlaybackUI` to `src/teams_avatar/adapters/preview_window.py` and `preview(ref, ui)` to `src/teams_avatar/app.py` using `LoopPlayer` for one pass (passes T062)
-- [ ] T066 [US3] [mode:direct] Add `list`, `preview`, `rename`, `delete`, `default` sub-commands to `src/teams_avatar/cli.py` (passes T063; depends on T064, T065)
+- [ ] T064 [US3] [mode:direct] Add `list_recordings`, `rename`, `delete`, `set_default` to `src/teams_avatar/app.py` (passes T061) — covers FR-005, FR-013
+- [ ] T065 [US3] [mode:direct] Add `PlaybackUI` to `src/teams_avatar/adapters/preview_window.py` and `preview(ref, ui)` to `src/teams_avatar/app.py` using `LoopPlayer` for one pass (passes T062) — covers FR-005
+- [ ] T066 [US3] [mode:direct] Add `list`, `preview`, `rename`, `delete`, `default` sub-commands to `src/teams_avatar/cli.py` (passes T063; depends on T064, T065) — covers FR-005, FR-018
 
 **Checkpoint**: All user stories are independently functional
 
@@ -171,7 +171,7 @@ Single project with the `src/` layout from plan.md: package `src/teams_avatar/`,
 - [ ] T069 [P] [mode:direct] Add `settings.example.json` at repo root listing every setting with its default (Technical Constraints: committed example of settings)
 - [ ] T070 [mode:direct] Run the hardware contract tests on the development machine: `$env:TEAMS_AVATAR_HW=1; uv run pytest tests/contract` and record results in `specs/001-recorded-video-camera/testing-guide.md` section 2
 - [ ] T071 [mode:direct] Tune `GHOST_THRESHOLD` in `src/teams_avatar/analysis.py` against at least three real recordings (still, small movement, sitting vs standing) and record the chosen value and evidence in `specs/001-recorded-video-camera/research.md` R5
-- [ ] T072 [mode:direct] Security pass: confirm no module imports `socket`, `http`, `urllib` or `requests` (add `tests/unit/test_no_network_imports.py` scanning `src/teams_avatar`), logs and `activity.jsonl` hold no picture data, pipe rejects wrong key and non-JSON (T036)
+- [ ] T072 [mode:direct] Security pass: confirm no module imports `socket`, `http`, `urllib` or `requests` (add `tests/unit/test_no_network_imports.py` scanning `src/teams_avatar`), logs and `activity.jsonl` hold no picture data, pipe rejects wrong key and non-JSON (T036) — covers FR-012, SC-006
 - [ ] T073 [mode:direct] Run quickstart.md validation end to end on the development machine
 - [ ] T074 [mode:direct] Finalize testing-guide.md against the built feature (real commands, devices, sample data) and run its automated checks
 - [ ] T075 [mode:direct] Run `/code-review` read-only on the uncommitted diff of `src/` and `tests/` per the collaboration rule; fix confirmed blocker/high findings (one re-review only) and report any unresolved ones
@@ -207,7 +207,8 @@ Single project with the `src/` layout from plan.md: package `src/teams_avatar/`,
 - Foundational implementation: T020, T021, T023, T027, T028, T030 together; then T025, T026, T029 after models/locks
 - US1 tests T034–T041 together; implementation T043–T047 together, then T048 → T049 → T050
 - US2 tests T051–T055 together; implementation T056–T058 together, then T059 → T060
-- US3 tests T061–T063 together; T065 in parallel with T064
+- US3 tests T061–T063 together; T064 then T065 (both edit `app.py`)
+- Within a phase, a [P] task may still wait on an earlier task it names (e.g. T025/T026 need T022–T023, T029 needs T028); [P] means it can run alongside the other tasks ready at that point
 - Different stories can run in parallel after Phase 2, except that edits to `app.py` and `cli.py` must be serialised
 
 ---

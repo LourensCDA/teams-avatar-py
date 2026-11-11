@@ -16,7 +16,8 @@ wrapper over the application facade in [app-api.md](app-api.md) (FR-018, FR-019)
 - On first use of any command, the disclosure notice (Principle I) is printed once and the user
   must type `y` to continue; `settings.first_use_acknowledged` is then set. With `--json`, or
   when stdin is not a terminal, the command does not prompt: it fails with exit code 3 and the
-  notice text unless `--accept-notice` is given, which acknowledges it.
+  notice text unless `--accept-notice` is given, which acknowledges it. The hidden `service`
+  command (started by `present`, never typed by the user) is exempt from this gate.
 
 ## Exit codes
 
@@ -69,6 +70,7 @@ While running, the service has its own minimised console window (research R11):
 Presenting "Office blue shirt" (recording 1280x720) on OBS Virtual Camera, canvas 1280x720 at 30 fps.
 Recording indicator: OFF
 In Teams or Zoom, choose "OBS Virtual Camera" as your camera.
+If it is not listed, close and reopen Teams or Zoom, or reopen its camera settings.
 Keep the "Teams Avatar" window open during meetings; closing it stops the camera.
 
 > teams-avatar status
