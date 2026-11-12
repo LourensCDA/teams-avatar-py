@@ -12,8 +12,10 @@ from teams_avatar.adapters.pyav_codec import PyAVReader
 from teams_avatar.models import RecordingWarning
 
 # Mean absolute difference (0-255) between first and last frames, at 160x90 greyscale, above
-# which the 1-second crossfade is likely to show a double image. Tuned in T071 (research R5).
-GHOST_THRESHOLD = 12
+# which the 1-second crossfade is likely to show a double image. Tuned in T071 (research R5): real
+# recordings scoring 7.3, 8.5 and 39.3 (sitting -> standing) all blended without a visible double
+# image in Teams, so the warning starts just above the highest score seen to be fine.
+GHOST_THRESHOLD = 40
 TOO_SHORT_S = 5.0
 _COMPARE_SIZE = (160, 90)
 

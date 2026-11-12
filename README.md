@@ -63,6 +63,54 @@ Data lives in `%LOCALAPPDATA%\TeamsAvatar\` (`library.json`, `settings.json`, `a
 `recordings\`, `logs\`). Set `TEAMS_AVATAR_HOME` to use another folder.
 [settings.example.json](settings.example.json) lists every setting with its default.
 
+## Recording yourself
+
+```powershell
+uv run teams-avatar record --name "Office"     # --camera "<name>" picks another webcam
+```
+
+1. Turn on a light and open the webcam's privacy shutter. In a dim room most webcams drop below
+   27 pictures per second, and `record` then refuses, giving the measured rate and the likely
+   cause.
+2. A window opens with your live picture, a red "REC" mark and the elapsed time. Recording has
+   started.
+3. **Click that window** so it has keyboard focus, then press **Space** or **Enter** to stop and
+   save, or **Esc** to cancel. Closing the window also cancels. Keys pressed in PowerShell do
+   nothing there, and Ctrl+C in PowerShell cancels.
+4. The terminal prints the name, length and picture size, plus any warnings. Run
+   `uv run teams-avatar list` to see the library.
+
+For a smooth repeat:
+
+- Record at least 5 seconds; 10–30 seconds works well. Shorter recordings get a "too short"
+  warning and repeat with a plain cut instead of the one-second blend.
+- End in roughly the pose you started in. If the start and end differ a lot, `record` warns that
+  the blend may show a double image. You can still present it; watch the repeat in the Teams
+  preview and re-record if it bothers you.
+- Without `--name`, the recording is named after the date and time. Names are up to 64 characters
+  from A–Z, a–z, 0–9, spaces, `.`, `_` and `-`, must be unique (ignoring case), and can be changed later with
+  `rename`.
+
+If you already have a clip of yourself, `import` it instead. It is converted to 30 fps, audio is
+dropped, and the original file is left untouched.
+
+## Permissions
+
+The tool needs no administrator rights, but Windows and your meeting app must allow camera use:
+
+- **Recording** uses your webcam from a desktop program (Python). In Windows Settings →
+  Privacy & security → Camera, turn on **Camera access** and **Let desktop apps access your
+  camera**. If either is off, `record` and `cameras` report the camera as unusable.
+- **Presenting** does not touch your webcam; the tool only writes to OBS Virtual Camera, and the
+  webcam light stays off. Teams or Zoom still need camera permission to show it: in the same
+  Settings page, allow the new Teams under **Let apps access your camera**, and leave **Let
+  desktop apps access your camera** on for Zoom.
+- Only one program can drive OBS Virtual Camera at a time. If OBS Studio's own "Start Virtual
+  Camera" is on, `present` stops with exit code 4 and tells you to turn it off.
+- On a work computer, your organisation's device policy may block camera access or virtual
+  cameras. The settings above would then be greyed out; ask your IT team rather than working
+  around it.
+
 ## Development
 
 ```powershell

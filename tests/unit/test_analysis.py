@@ -7,7 +7,7 @@ from tests.conftest import ClipFactory
 
 
 def test_threshold_constant() -> None:
-    assert GHOST_THRESHOLD == 12
+    assert GHOST_THRESHOLD == 40  # tuned in T071 against three real recordings
 
 
 def grey(level: int, w: int = 640, h: int = 360) -> np.ndarray:

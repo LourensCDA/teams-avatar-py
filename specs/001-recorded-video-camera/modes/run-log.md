@@ -29,3 +29,4 @@
 | T075 | direct (review delegated) | cycle 1: 6 high, 2 medium, 2 low; fixing high+medium test-first | cycle 1 of max 2 | modes/T075.md |
 | T075 | direct (review delegated) | cycle 1: 8 high/medium fixed (356 passed); cycle 2: 3 high + 7 medium follow-ons REPORTED UNRESOLVED (hard stop after two cycles) | 2 cycles | modes/T075.md |
 | T075 | follow-up (user request) | all 10 cycle-2 findings fixed test-first; 376 passed, HW 35 passed, live OBS smoke OK; not re-reviewed (two-cycle limit) | - | modes/T075.md |
+| T071 | direct (user-assisted) | GHOST_THRESHOLD 12 -> 40: still 8.5, move 7.3, sit/stand 39.3 all fine in Teams; no ghost sample, upper bound untested; TS-001 Teams PASS | - | research.md R5 |

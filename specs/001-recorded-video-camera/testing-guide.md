@@ -6,8 +6,8 @@
 
 Status: finalized. Output text below is what the tool prints (captured 2026-11-11 with a fresh
 `TEAMS_AVATAR_HOME`). One item is still open: the ghosting threshold is the research value
-`GHOST_THRESHOLD = 12` in `src/teams_avatar/analysis.py`; TS-015 tunes it (T071, needs a lit camera).
-Manual scenarios TS-001 and TS-002 have not been run yet (see section 8).
+`GHOST_THRESHOLD = 40` in `src/teams_avatar/analysis.py`, tuned in TS-015 (T071) on 2026-11-12.
+TS-001 (Teams) passed on 2026-11-12; TS-002 (Zoom) has not been run yet (see section 8).
 
 ## 1. Prerequisites
 
@@ -104,7 +104,7 @@ delivers 7–10 fps and `record` refuses it (see section 5).
   per recording warning. Teams preview shows the clip. Command returned within 30 s (SC-002).
 - **Note**: This is the plan's biggest open risk (R1): whether Teams lists the camera while
   pyvirtualcam drives it. Run it before anything else; if it fails, revisit R1.
-- **Result**: [ ] Pass [ ] Fail  Notes:
+- **Result**: [x] Pass  Notes: 2026-11-12, Teams listed "OBS Virtual Camera" while the tool drove it and showed "Still 1", "Move 1" and "Stand 1" looping. R1 holds.
 
 ### TS-002: Present a recording in Zoom (User Story 1, scenario 1; FR-006)
 
@@ -262,7 +262,10 @@ delivers 7–10 fps and `record` refuses it (see section 5).
      others.
 - **Expected result**: The still and small-movement clips score below the threshold; the sitting
   vs standing clip scores above it.
-- **Result**: [ ] Pass [ ] Fail  Scores: still ___ small ___ sit/stand ___  Chosen: ___
+- **Result**: [x] Pass (with a change to the plan)  Scores: still 8.5, small 7.3, sit/stand 39.3
+  Chosen: 40. Run 2026-11-12 in Teams: none of the three showed a double image, including
+  sit/stand, so the expectation that it scores above the threshold was revised: the threshold
+  sits just above the highest score seen to be fine. See research.md R5.
 
 ## 4. Safety and privacy checks
 

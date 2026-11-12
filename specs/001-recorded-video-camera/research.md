@@ -149,6 +149,12 @@ documentation (Context7, `/letmaik/pyvirtualcam`).
 - **Ghosting warning**: at save/import time, compare the first and last frames downscaled to
   160×90 greyscale; mean absolute difference above 12 (of 255) triggers the FR-015 warning. The
   threshold is a named constant, tuned during implementation against real recordings.
+- **Tuned (T071, 2026-11-12)**: `GHOST_THRESHOLD = 40`. Three recordings on the Integrated Camera
+  in normal light, presented in Teams via OBS Virtual Camera: still 8.5, small movement 7.3,
+  sitting to standing 39.3. None showed a visible double image at the repeat, so the research
+  value 12 warned falsely on the sit/stand clip. 40 is just above the highest score seen to be
+  fine. No recording with a visible ghost was available, so the upper bound is untested: if a
+  loop that scores under 40 ever shows a double image, lower the threshold to below its score.
 - **Alternatives considered**: forward-then-backward (rejected in clarification); optical-flow
   morphing (heavy dependency, slow).
 
