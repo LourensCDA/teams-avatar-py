@@ -1,0 +1,71 @@
+[project]
+name = "teams-avatar"
+version = "0.1.0"
+description = "Record yourself and present the recording as your camera through OBS Virtual Camera."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+# Pinned exactly; each dependency is justified in specs/001-recorded-video-camera/research.md (R1-R3, R7, R9).
+dependencies = [
+    "pyvirtualcam==0.15.0",
+    "av==19.0.2",
+    "opencv-python==5.0.0.93",
+    "numpy==2.5.4",
+]
+
+[project.scripts]
+teams-avatar = "teams_avatar.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "mypy",
+    "ruff",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/teams_avatar"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "D", "ANN"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["teams_avatar", "tests", "tools"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+# Test functions are named for the behaviour they check; a docstring per test adds nothing.
+"tests/**" = ["D100", "D101", "D102", "D103", "D104", "D105", "D107"]
+"tools/**" = ["D104"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests", "tools"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+# pyvirtualcam ships no type information and OpenCV's bundled stubs are incomplete for the
+# drawing calls we use, so their imports are treated as Any.
+module = ["pyvirtualcam", "pyvirtualcam.*", "cv2", "cv2.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+    "hardware: needs a physical camera and OBS Virtual Camera; runs only with TEAMS_AVATAR_HW=1",
+]
